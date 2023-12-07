@@ -1,5 +1,4 @@
-import { invoke } from "@tauri-apps/api/primitives"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 import { Menu } from "@/components/menu"
 
@@ -14,8 +13,21 @@ function App() {
 
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    setGreetMsg(await invoke("greet", { name }))
+    const { invoke } = await import("@tauri-apps/api/primitives")
+    const res = await invoke("greet", { name })
+    console.log("res", res)
   }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        await greet()
+      } catch (e) {
+        console.error(e)
+      }
+      console.log("greeted")
+    })()
+  }, [])
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
